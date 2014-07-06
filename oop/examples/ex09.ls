@@ -6,8 +6,7 @@ class Person
     @getType = ->
         return @type
 
-    (name) ->
-        @name = name
+    (@name) ->
         @@personCount++
 
     sayHello : ->

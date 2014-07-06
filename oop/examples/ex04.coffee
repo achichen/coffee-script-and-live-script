@@ -1,7 +1,6 @@
-# class Person
 class Person
-	constructor : (name) ->
-		@name = name
+	# Use a shorthand to assing @name
+	constructor : (@name) ->
 
 	sayHello : () ->
 		console.log("hello, i'm", @name)
@@ -10,7 +9,6 @@ class Person
 		console.log(@name, "is walking")
 
 
-# class BasketballPlayer
 class BasketballPlayer extends Person
 	constructor : (name, team) ->
 		super(name)

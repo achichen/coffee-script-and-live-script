@@ -1,4 +1,3 @@
-# class Person
 class Person
     # Static members
     @personCount = 0
@@ -7,8 +6,7 @@ class Person
     @getType = ->
         return @type
 
-    (name) ->
-        @name = name
+    (@name) ->
         @@personCount++
 
     sayHello : ->
@@ -18,7 +16,6 @@ class Person
         console.log(@name, "is walking")
 
 
-# class BasketballPlayer
 class BasketballPlayer extends Person
 
     (name, team) ->

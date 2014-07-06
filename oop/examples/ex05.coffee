@@ -6,8 +6,7 @@ class Person
     @getType = () ->                    # alternative: @getType : () ->
         return @type
 
-    constructor : (name) ->
-        @name = name
+    constructor : (@name) ->
         Person.personCount++
 
     sayHello : () ->

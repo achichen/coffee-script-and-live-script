@@ -99,8 +99,8 @@ CoffeeScript provides ***class-based oop*** over ***protoype-based oop*** JavaSc
 To rewrite the class definition in Example 1 using CoffeeScript:
 ```coffeescript
 class Person
-	constructor : (name) ->
-		@name = name
+	# Use a shorthand to assing @name
+    constructor : (@name) ->
 
 	sayHello : () ->
 		console.log("hello, i'm", @name)
@@ -153,10 +153,9 @@ it is compiled to:
 CoffeeScript provides `extends` for inheritance. Let's rewrite the Example 2 using CoffeeScript.
 
 ```coffeescript
-# class Person
 class Person
-	constructor : (name) ->
-		@name = name
+	# Use a shorthand to assing @name
+	constructor : (@name) ->
 
 	sayHello : () ->
 		console.log("hello, i'm", @name)
@@ -165,7 +164,6 @@ class Person
 		console.log(@name, "is walking")
 
 
-# class BasketballPlayer
 class BasketballPlayer extends Person
 	constructor : (name, team) ->
 		super(name)
@@ -291,8 +289,7 @@ class Person
     @getType = () ->                    # alternative: @getType : () ->
         return @type
 
-    constructor : (name) ->
-        @name = name
+    constructor : (@name) ->
         Person.personCount++
 
     sayHello : () ->
@@ -358,7 +355,6 @@ person2 = new Person("jeremy lin");
 static members are inherited by subclass. But unlike Java, C++, the inherited static members are **copied** into subclass, change on it doesn't affect the superclass's static member. The same behavior can also be found in Python.
 
 ```coffeescript
-# class Person
 class Person
     # Static members
     @personCount = 0                    # alternative: @personCount : 0
@@ -367,8 +363,7 @@ class Person
     @getType = () ->                    # alternative: @getType : () ->
         return @type
 
-    constructor : (name) ->
-        @name = name
+    constructor : (@name) ->
         Person.personCount++
 
     sayHello : () ->
@@ -378,12 +373,10 @@ class Person
         console.log(@name, "is walking")
 
 
-# class BasketballPlayer
 class BasketballPlayer extends Person
 
-    constructor : (name, team) ->
+    constructor : (name, @team) ->
         super(name)
-        @team = team
         BasketballPlayer.personCount+=2
 
     sayHello : () ->
@@ -422,14 +415,15 @@ console.log BasketballPlayer.personCount    # 2
 
 ## LiveScript
 
-### Example 7
-LiveScript provides `class` statement the same as CoffeeScript, except the `constrcutor` keyword is removed.
+LiveScript provides `class` statement the same as CoffeeScript, except the `constrcutor` keyword is removed. From Example 7 to 10, it demostrates the behavior of LiveScript class is the same as CoffeeScript. In fact, their compiled code is almost in the same logic.
 
+### Example 7
+
+Rewrite Example 3 using LiveScript.
 
 ```livescript
 class Person
-    (name) ->
-        @name = name
+    (@name) ->
 
     sayHello : ->
         console.log("hello, i'm", @name)
@@ -448,10 +442,8 @@ person2.sayHello()                              # hello, i'm jeremy lin
 Inheritance is also the same as CoffeeScript.
 
 ```livescript
-# class Person
 class Person
-    (name) ->
-        @name = name
+    (@name) ->
 
     sayHello : ->
         console.log("hello, i'm", @name)
@@ -460,7 +452,6 @@ class Person
         console.log(@name, "is walking")
 
 
-# class BasketballPlayer
 class BasketballPlayer extends Person
     (name, team) ->
         super(name)
@@ -494,7 +485,7 @@ player2.walk()
 ![](https://raw.githubusercontent.com/achichen/qcloud-sharing-july-seventh/master/oop/prototype_chain_by_livescript.png)
 
 ### Example 9
-static members behaves just like CoffeeScript.
+static members behaves just like CoffeeScript. `@@` annotation is a shorthand to the constructor.
 
 ```livescript
 class Person
@@ -505,8 +496,7 @@ class Person
     @getType = ->
         return @type
 
-    (name) ->
-        @name = name
+    (@name) ->
         @@personCount++
 
     sayHello : ->
@@ -537,7 +527,6 @@ console.log(person2.getClassType())     # "PERSON"
 static members behaves just like CoffeeScript.
 
 ```livescript
-# class Person
 class Person
     # Static members
     @personCount = 0
@@ -546,8 +535,7 @@ class Person
     @getType = ->
         return @type
 
-    (name) ->
-        @name = name
+    (@name) ->
         @@personCount++
 
     sayHello : ->
@@ -557,7 +545,6 @@ class Person
         console.log(@name, "is walking")
 
 
-# class BasketballPlayer
 class BasketballPlayer extends Person
 
     (name, team) ->
@@ -595,4 +582,144 @@ console.log BasketballPlayer.getType()      # "BasketballPlayer!!!"
 
 console.log Person.personCount              # 1
 console.log BasketballPlayer.personCount    # 2
+```
+
+### Example 11
+LiveScripts provides addition feature called **Mixin**. A mixin is an object(or class) waiting to be *mixed in* somewhere. You may treat it as a reusable component, implementing certain interface, usually not used alone. 
+
+Mixin is a good concept to reuse codes by combining difference pieces of codes in a place.
+
+LiveScript uses keyword `implements` to mixin. This might be very confusing for Java guys. But it is more like multiple inheritance.
+
+```livescript
+Runnable =
+    run: ->
+        "run!!"
+
+Renamable = 
+    set-name : (@name) ->
+    get-name : -> @name ? @id
+
+
+class A implements Runnable, Renamable
+    ->
+        @id = Math.random! * 1000
+
+a = new A
+a.set-name "Achi"
+console.log "a.get-name!", a.get-name()         # run Renamable.get-name()
+console.log a.run()                             # run Runnable.run()
+```
+
+If you check the compiled JavaScript. There is no magic, simply copying everything from each mixed-in objects.
+
+```javascript
+(function() {
+    var Runnable, Renamable, A, a;
+    Runnable = {
+        run: function() {
+            return "run!!";
+        }
+    };
+    Renamable = {
+        setName: function(name) {
+            this.name = name;
+        },
+        getName: function() {
+            var ref$;
+            return (ref$ = this.name) != null ? ref$ : this.id;
+        }
+    };
+    A = (function() {
+        A.displayName = 'A';
+        var prototype = A.prototype,
+            constructor = A;
+        importAll$(prototype, arguments[0]);
+        importAll$(prototype, arguments[1]);
+
+        function A() {
+            this.id = Math.random() * 1000;
+        }
+        return A;
+    }(Runnable, Renamable));
+    a = new A;
+    a.setName("Achi");
+    console.log("a.get-name!", a.getName());
+    console.log(a.run());
+
+    function importAll$(obj, src) {
+        for (var key in src) obj[key] = src[key];
+        return obj;
+    }
+}).call(this);
+```
+
+### Example 12
+When there are more than one mixin containing function with the same name, the later is used.
+
+```livescript
+Renamable = 
+    set-name : (@name) ->
+    get-name : -> @name
+
+Nameconcatable = 
+    get-name : -> "#{@name} #{@id}"
+
+
+class A implements Renamable, Nameconcatable
+    ->
+        @id = Math.random! * 1000
+
+a = new A
+a.set-name "Achi"
+console.log a.get-name()          # run Nameconcatable.get-name(), the later overide the former
+```
+
+### Example 13
+It is not working as you expected if you mixin a class.
+
+```livescript
+class Runnable
+
+    run: ->
+        "run!!"
+
+Renamable = 
+    set-name : (@name) ->
+    get-name : -> @name ? @id
+
+
+class A implements Runnable, Renamable
+    ->
+        @id = Math.random! * 1000
+
+a = new A
+a.set-name "Achi"
+
+console.log a.run!              # TypeError: Object #<A> has no method 'run'
+```
+
+### Example 14
+Instead, you should mixin its instance rather than the class itself.
+
+```livescript
+class Runnable
+
+    run: ->
+        "run!!"
+
+Renamable = 
+    set-name : (@name) ->
+    get-name : -> @name ? @id
+
+
+R = new Runnable
+class A implements R, Renamable
+    ->
+        @id = Math.random! * 1000
+
+a = new A
+a.set-name "Achi"
+
+console.log a.run!              # TypeError: Object #<A> has no method 'run'
 ```

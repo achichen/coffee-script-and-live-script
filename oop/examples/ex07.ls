@@ -1,6 +1,5 @@
 class Person
-    (name) ->
-        @name = name
+    (@name) ->
 
     sayHello : ->
         console.log("hello, i'm", @name)

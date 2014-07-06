@@ -1,7 +1,5 @@
-# class Person
 class Person
-    (name) ->
-        @name = name
+    (@name) ->
 
     sayHello : ->
         console.log("hello, i'm", @name)
@@ -10,7 +8,6 @@ class Person
         console.log(@name, "is walking")
 
 
-# class BasketballPlayer
 class BasketballPlayer extends Person
     (name, team) ->
         super(name)

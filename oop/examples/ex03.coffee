@@ -1,6 +1,6 @@
 class Person
-	constructor : (name) ->
-		@name = name
+	# Use a shorthand to assing @name
+    constructor : (@name) ->
 
 	sayHello : () ->
 		console.log("hello, i'm", @name)

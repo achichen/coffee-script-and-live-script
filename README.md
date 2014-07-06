@@ -1,3 +1,5 @@
+
+
 # Scope
 
 ### Javascript
@@ -38,10 +40,13 @@ in global, x= 1
 ```
 
 Javascript has only 2 level of scope:
-- global
-- function
+- **global**
+- **function**
 
 Unlike other lanaguage such as Java, JavaScript has no ***blocking scope***.
+
+Redeclare x in the for loop blocking using `var x` do nothing and no warning at all, it simply refer to the same `x` declared in first line of `f() {...}`.
+
 
 ### CoffeeScript
 ```coffeescript

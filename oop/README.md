@@ -285,6 +285,7 @@ It is also possible to add **static** members onto class. But unlike Java, C++ a
 ```coffeescript
 class Person
     # Static members
+    @personCount : 0
     @type : "PERSON"                    # alternative: @type = "PERSON"
 
     @getType : () ->                    # alternative: @getType = () ->
@@ -292,6 +293,7 @@ class Person
 
     constructor : (name) ->
         @name = name
+        Person.personCount++
 
     sayHello : () ->
         console.log("hello, i'm", @name)
@@ -303,12 +305,15 @@ person1 = new Person("manu ginobili")
 person2 = new Person("jeremy lin")
 
 console.log(Person.type)                # "PERSON"
+console.log(Person.personCount)         # 2
 console.log(person1.type)               # undefined
+console.log(person1.personCount)        # undefined
 console.log(person2.type)               # undefined
+console.log(person2.personCount)        # undefined
 
 console.log(Person.getType())           # "PERSON"
-console.log(person1.getType())          # TypeError: Object #<Person> has no method 'getType'
-console.log(person2.getType())          # TypeError: Object #<Person> has no method 'getType'
+#console.log(person1.getType())         # TypeError: Object #<Person> has no method 'getType'
+#console.log(person2.getType())         # TypeError: Object #<Person> has no method 'getType'
 
 console.log(person1.getClassType())     # "PERSON"
 console.log(person2.getClassType())     # "PERSON"
@@ -317,32 +322,36 @@ console.log(person2.getClassType())     # "PERSON"
 it is compiled to:
 
 ```javascript
-(function() {
-    var Person, person1, person2;
+var Person, person1, person2;
 
-    Person = (function() {
-        Person.type = "PERSON";
+Person = (function() {
+    Person.personCount = 0;
 
-        Person.getType = function() {
-            return this.type;
-        };
+    Person.type = "PERSON";
 
-        function Person(name) {
-            this.name = name;
-        }
+    Person.getType = function() {
+        return this.type;
+    };
 
-        Person.prototype.sayHello = function() {
-            return console.log("hello, i'm", this.name);
-        };
+    function Person(name) {
+        this.name = name;
+        Person.personCount++;
+    }
 
-        Person.prototype.getClassType = function() {
-            return Person.type;
-        };
+    Person.prototype.sayHello = function() {
+        return console.log("hello, i'm", this.name);
+    };
 
-        return Person;
+    Person.prototype.getClassType = function() {
+        return Person.type;
+    };
 
-    })();
-}).call(this);
+    return Person;
+})();
+
+person1 = new Person("manu ginobili");
+
+person2 = new Person("jeremy lin");
 ```
 
 ### Example 6
@@ -360,7 +369,7 @@ class Person
 
     constructor : (name) ->
         @name = name
-        Person.pesonCount++
+        Person.personCount++
 
     sayHello : () ->
         console.log("hello, i'm", @name)
@@ -375,7 +384,7 @@ class BasketballPlayer extends Person
     constructor : (name, team) ->
         super(name)
         @team = team
-        BasketballPlayer.personCount++
+        BasketballPlayer.personCount+=2
 
     sayHello : () ->
         super()
@@ -405,6 +414,6 @@ BasketballPlayer.getType = () ->
 console.log Person.getType()                # "PERSON"
 console.log BasketballPlayer.getType()      # "BasketballPlayer!!!"
 
-console.log Person.personCount              # 0
-console.log BasketballPlayer.personCount    # 1
+console.log Person.personCount              # 1
+console.log BasketballPlayer.personCount    # 2
 ```

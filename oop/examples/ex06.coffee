@@ -9,7 +9,7 @@ class Person
 
     constructor : (name) ->
         @name = name
-        Person.pesonCount++
+        Person.personCount++
 
     sayHello : () ->
         console.log("hello, i'm", @name)
@@ -24,7 +24,7 @@ class BasketballPlayer extends Person
     constructor : (name, team) ->
         super(name)
         @team = team
-        BasketballPlayer.personCount++
+        BasketballPlayer.personCount+=2
 
     sayHello : () ->
         super()
@@ -54,5 +54,5 @@ BasketballPlayer.getType = () ->
 console.log Person.getType()                # "PERSON"
 console.log BasketballPlayer.getType()      # "BasketballPlayer!!!"
 
-console.log Person.personCount              # 0
-console.log BasketballPlayer.personCount    # 1
+console.log Person.personCount              # 1
+console.log BasketballPlayer.personCount    # 2

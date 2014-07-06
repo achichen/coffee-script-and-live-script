@@ -112,4 +112,4 @@ console.log(Person.prototype.__proto__ === Object.prototype);				// true
 ```
 
 #### Prototype Chain
-![](https://github.com/achichen/qcloud-sharing-july-seventh/tree/master/oop/prototype_chain.png)
+![](https://github.com/achichen/qcloud-sharing-july-seventh/blob/master/oop/prototype_chain.png)

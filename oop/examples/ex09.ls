@@ -1,19 +1,19 @@
 class Person
     # Static members
-    @personCount = 0                    # alternative: @personCount : 0
-    @type = "PERSON"                    # alternative: @type : "PERSON"
+    @personCount = 0
+    @type = "PERSON"
 
-    @getType = () ->                    # alternative: @getType : () ->
+    @getType = ->
         return @type
 
-    constructor : (name) ->
+    (name) ->
         @name = name
-        Person.personCount++
+        @@personCount++
 
-    sayHello : () ->
+    sayHello : ->
         console.log("hello, i'm", @name)
 
-    getClassType : () ->
+    getClassType : ->
         return Person.type
 
 person1 = new Person("manu ginobili")

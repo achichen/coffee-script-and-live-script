@@ -1,8 +1,8 @@
 ## JavaScript
 
-JavaScript is an OO language, just not that straight-forward by using ***prototype-based oop***:
+JavaScript is an OO language. But it's just not that straight-forward because of using ***prototype-based oop***:
 - instead of defining `class`, JavaScript defines ***constructor***
-- inheritance is provided by ***protytype chaining***
+- member lookup and inheritance are achieved by ***protytype chaining***
 
 ### Example1
 
@@ -285,10 +285,10 @@ It is also possible to add **static** members onto class. But unlike Java, C++ a
 ```coffeescript
 class Person
     # Static members
-    @personCount : 0
-    @type : "PERSON"                    # alternative: @type = "PERSON"
+    @personCount = 0                    # alternative: @personCount : 0
+    @type = "PERSON"                    # alternative: @type : "PERSON"
 
-    @getType : () ->                    # alternative: @getType = () ->
+    @getType = () ->                    # alternative: @getType : () ->
         return @type
 
     constructor : (name) ->
@@ -361,10 +361,10 @@ static members are inherited by subclass. But unlike Java, C++, the inherited st
 # class Person
 class Person
     # Static members
-    @personCount : 0
-    @type : "PERSON"                        # alternative: @type = "PERSON"
+    @personCount = 0                    # alternative: @personCount : 0
+    @type = "PERSON"                    # alternative: @type : "PERSON"
 
-    @getType : () ->                        # alternative: @getType = () ->
+    @getType = () ->                    # alternative: @getType : () ->
         return @type
 
     constructor : (name) ->
@@ -410,6 +410,185 @@ console.log Person.type                     # "PERSON"
 console.log BasketballPlayer.type           # "BasketballPlayer"
 
 BasketballPlayer.getType = () ->
+    return @type + "!!!!!"
+console.log Person.getType()                # "PERSON"
+console.log BasketballPlayer.getType()      # "BasketballPlayer!!!"
+
+console.log Person.personCount              # 1
+console.log BasketballPlayer.personCount    # 2
+```
+
+---
+
+## LiveScript
+
+### Example 7
+LiveScript provides `class` statement the same as CoffeeScript, except the `constrcutor` keyword is removed.
+
+
+```livescript
+class Person
+    (name) ->
+        @name = name
+
+    sayHello : ->
+        console.log("hello, i'm", @name)
+
+person1 = new Person("manu ginobili")
+person2 = new Person("jeremy lin")
+
+console.log("person1", person1)
+console.log("person2", person2)
+
+person1.sayHello()                              # hello, i'm manu ginobili
+person2.sayHello()                              # hello, i'm jeremy lin
+```
+
+### Example 8
+Inheritance is also the same as CoffeeScript.
+
+```livescript
+# class Person
+class Person
+    (name) ->
+        @name = name
+
+    sayHello : ->
+        console.log("hello, i'm", @name)
+
+    walk : ->
+        console.log(@name, "is walking")
+
+
+# class BasketballPlayer
+class BasketballPlayer extends Person
+    (name, team) ->
+        super(name)
+        @team = team
+
+    sayHello : ->
+        super()
+        console.log("of", @team)
+
+    jump : ->
+        console.log(@name, "is jumping")
+
+
+# create 2 player instance
+player1 = new BasketballPlayer("manu ginobini", "san antonio spurs")
+player2 = new BasketballPlayer("jeremy lin", "houston rockets")
+
+console.log("player1", player1)
+console.log("player2", player2)
+
+player1.sayHello()
+player1.jump()
+player1.walk()
+
+player2.sayHello()
+player2.jump()
+player2.walk()
+```
+
+#### Prototype Chain
+![](https://raw.githubusercontent.com/achichen/qcloud-sharing-july-seventh/master/oop/prototype_chain_by_livescript.png)
+
+### Example 9
+static members behaves just like CoffeeScript.
+
+```livescript
+class Person
+    # Static members
+    @personCount = 0
+    @type = "PERSON"
+
+    @getType = ->
+        return @type
+
+    (name) ->
+        @name = name
+        @@personCount++
+
+    sayHello : ->
+        console.log("hello, i'm", @name)
+
+    getClassType : ->
+        return Person.type
+
+person1 = new Person("manu ginobili")
+person2 = new Person("jeremy lin")
+
+console.log(Person.type)                # "PERSON"
+console.log(Person.personCount)         # 2
+console.log(person1.type)               # undefined
+console.log(person1.personCount)        # undefined
+console.log(person2.type)               # undefined
+console.log(person2.personCount)        # undefined
+
+console.log(Person.getType())           # "PERSON"
+#console.log(person1.getType())         # TypeError: Object #<Person> has no method 'getType'
+#console.log(person2.getType())         # TypeError: Object #<Person> has no method 'getType'
+
+console.log(person1.getClassType())     # "PERSON"
+console.log(person2.getClassType())     # "PERSON"
+```
+
+### Example 10
+static members behaves just like CoffeeScript.
+
+```livescript
+# class Person
+class Person
+    # Static members
+    @personCount = 0
+    @type = "PERSON"
+
+    @getType = ->
+        return @type
+
+    (name) ->
+        @name = name
+        @@personCount++
+
+    sayHello : ->
+        console.log("hello, i'm", @name)
+
+    walk : ->
+        console.log(@name, "is walking")
+
+
+# class BasketballPlayer
+class BasketballPlayer extends Person
+
+    (name, team) ->
+        super(name)
+        @team = team
+        @@personCount+=2
+
+    sayHello : ->
+        super()
+        console.log("of", @team)
+
+    jump : ->
+        console.log(@name, "is jumping")
+
+# create 2 player instance
+player1 = new BasketballPlayer("manu ginobini", "san antonio spurs")
+
+
+console.log Person.type                     # "PERSON"
+console.log Person.getType()                # "PERSON"
+console.log BasketballPlayer.type           # "PERSON"
+console.log BasketballPlayer.getType()      # "PERSON"
+
+console.log player1.type                    # undefined
+#console.log player1.getType()              # TypeError: Object #<BasketballPlayer> has no method 'getType'
+
+BasketballPlayer.type = "BasketballPlayer"
+console.log Person.type                     # "PERSON"
+console.log BasketballPlayer.type           # "BasketballPlayer"
+
+BasketballPlayer.getType = ->
     return @type + "!!!!!"
 console.log Person.getType()                # "PERSON"
 console.log BasketballPlayer.getType()      # "BasketballPlayer!!!"

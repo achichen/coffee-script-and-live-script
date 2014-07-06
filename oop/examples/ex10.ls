@@ -1,36 +1,36 @@
 # class Person
 class Person
     # Static members
-    @personCount = 0                    # alternative: @personCount : 0
-    @type = "PERSON"                    # alternative: @type : "PERSON"
+    @personCount = 0
+    @type = "PERSON"
 
-    @getType = () ->                    # alternative: @getType : () ->
+    @getType = ->
         return @type
 
-    constructor : (name) ->
+    (name) ->
         @name = name
-        Person.personCount++
+        @@personCount++
 
-    sayHello : () ->
+    sayHello : ->
         console.log("hello, i'm", @name)
 
-    walk : () ->
+    walk : ->
         console.log(@name, "is walking")
 
 
 # class BasketballPlayer
 class BasketballPlayer extends Person
 
-    constructor : (name, team) ->
+    (name, team) ->
         super(name)
         @team = team
-        BasketballPlayer.personCount+=2
+        @@personCount+=2
 
-    sayHello : () ->
+    sayHello : ->
         super()
         console.log("of", @team)
 
-    jump : () ->
+    jump : ->
         console.log(@name, "is jumping")
 
 # create 2 player instance
@@ -49,7 +49,7 @@ BasketballPlayer.type = "BasketballPlayer"
 console.log Person.type                     # "PERSON"
 console.log BasketballPlayer.type           # "BasketballPlayer"
 
-BasketballPlayer.getType = () ->
+BasketballPlayer.getType = ->
     return @type + "!!!!!"
 console.log Person.getType()                # "PERSON"
 console.log BasketballPlayer.getType()      # "BasketballPlayer!!!"

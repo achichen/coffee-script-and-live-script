@@ -43,14 +43,14 @@ Javascript has only 2 level of scope:
 var x = 1;                                  // global x
 
 function f() {
-    var x = 5;                              // internal x
+    var x = 5;                              // inner x
 
     for (var i = 0; i < 10; i++) {
-        var x = i * 2;                      // internal x
+        var x = i * 2;                      // inner x
         console.log("in loop, x=", x);
     }
 
-    console.log("in f() x=", x);            // internal x
+    console.log("in f() x=", x);            // inner x
 }
 
 f();
@@ -119,7 +119,7 @@ f()
 console.log "in global, x=", x          # global x
 ```
 
-But this one doesn't work. LiveScript compiler complains *SyntaxError: accidental shadow of "x"*. Because the `x = i*2` always declares a `x` in the internal scope, which shadows the global one.
+But this one doesn't work. LiveScript compiler complains *SyntaxError: accidental shadow of "x"*. Because the `x = i*2` always declares a `x` in the inner scope, which shadows the global one.
 
 ```livescript
 x = 1                                   # global x
@@ -127,8 +127,8 @@ f = ->
     x := 5                              # global x
 
     for i from 0 til 10
-        x = i * 2                       # try using a inertal x
-        console.log "in loop, x=", x    # try using a inertal x
+        x = i * 2                       # declare x in inner scope
+        console.log "in loop, x=", x    # inner x
 
     console.log "in f() x=", x          # global x
 

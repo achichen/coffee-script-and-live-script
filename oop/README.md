@@ -723,3 +723,7 @@ a.set-name "Achi"
 
 console.log a.run!              # TypeError: Object #<A> has no method 'run'
 ```
+
+---
+## Conclusion
+CoffeeScript and LiveScript both provide better OOP paradigm than JavaScript. It is highly recommended to use it if possible. But you should always understand what's behind the scene.

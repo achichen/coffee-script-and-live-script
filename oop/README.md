@@ -585,11 +585,11 @@ console.log BasketballPlayer.personCount    # 2
 ```
 
 ### Example 11
-LiveScripts provides addition feature called **Mixin**. A mixin is an object(or class) waiting to be *mixed in* somewhere. You may treat it as a reusable component, implementing certain interface, usually not used alone. 
+LiveScripts provides addition feature called **Mixin**. A mixin is an object(or class) waiting to be *mixed in* somewhere. Basically, a mixin is a stand-alone component that provides limited functionality.
 
 Mixin is a good concept to reuse codes by combining difference pieces of codes in a place.
 
-LiveScript uses keyword `implements` to mixin. This might be very confusing for Java guys. But it is more like multiple inheritance.
+LiveScript uses keyword `implements` to mixin. This might be very confusing for Java guys. While it is more like multiple inheritance.
 
 ```livescript
 Runnable =

@@ -117,9 +117,9 @@ When writing JavaScript, you have to be careful about `var`, which sometimes doe
 
 CoffeeScript solves this problem by **strickly forbidding you from declaring variables**, enforcing **lexical scope**. You never write `var x` yourself. Variable is automatically declared when the 1st time you use it. Any later use of it refers to the one already declared in scopes. 
 
-It is less confusing if Example 1 is rewritten to Example 3 using coffee.
-
 ### Example 3
+It is less confusing if Example 1 is rewritten using coffee.
+
 ```coffeescript
 x = 1                                   # global x
 
@@ -207,7 +207,7 @@ The effect is completely the same as Example 3. CoffeeScript doesn't create a ne
 
 
 ### Example 5
-Let's do something interesting, change Example 3 a little bit. Now the global `x = 1` is moved after the `f()`.
+Now let's do something interesting on Example 3, move the global `x = 1` after the `f()`.
 
 ```coffeescript
 f = () ->
@@ -271,8 +271,8 @@ The compiled Javascript is :
 
 ### The Problem
 
-1. Is lexical scope less confusing? Move a single line might completely change the scope and final result.
-2. What if **we do want to modify the global x in f()**? Unfortunately, there is no way to do that in Coffee.
+1. Is lexical scope less confusing? You have to examine codes before current line for occurrence of the variable you want use. And moving a single line might completely change the scope and final result.
+2. What if we do want to modify the global x from f()? Unfortunately, there is no way to do that in Coffee.
 
 ---
 
@@ -383,7 +383,7 @@ console.log "in global, x=", x          # global x
 ```
 
 ### Example 10
-Let's see another example that a `x` is declared in `f()` scope.
+Let's see another example, a `x` is declared in `f()` scope.
 
 ```livescript
 x = 1                                   # global x
@@ -406,12 +406,12 @@ console.log "in global, x=", x          # global x
 ```
 
 ### Example 11
-But this one doesn't work. LiveScript compiler complains *SyntaxError: accidental shadow of "x"*. Because the `x = i*2` always declares a `x` in the inner scope, which shadows the global one.
+However, when you try to use both `:=` and `=` to access the same variable `x` in `f()`. LiveScript compiler complains ***SyntaxError: accidental shadow of "x"***. Because the line `x = i*2` always declares a `x` in the inner scope, which shadows the global one.
 
 ```livescript
 x = 1                                   # global x
 f = ->
-    x := 5                              # global x
+    x := 5                              # no way to access global x, because it has been shadowed
 
     for i from 0 til 10
         x = i * 2                       # declare x in inner scope

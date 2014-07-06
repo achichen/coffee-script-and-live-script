@@ -1,4 +1,4 @@
-// class Person
+// constructor Person
 function Person(name) {
 	this.name = name;
 }

@@ -7,7 +7,7 @@ JavaScript is an OO language, just not that straight-forward by using ***prototy
 ### Example1
 
 ```javascript
-// class Person
+// constructor Person
 function Person(name) {
 	this.name = name;
 }
@@ -36,20 +36,20 @@ person2.sayHello();								// bonjour, je suis jeremy lin
 ### Example 2
 
 ```javascript
-// class Person
+// constructor Person
 function Person(name) {
 	this.name = name;
 }
 
 Person.prototype.sayHello = function() {
-	console.log("hello", this.name);
+	console.log("hello, i'm", this.name);
 }
 
 Person.prototype.walk = function() {
 	console.log(this.name, "is walking");
 }
 
-// class BasketballPlayer
+// constructor BasketballPlayer
 function BasketballPlayer(name, team) {
 	Person.call(this, name);
 
@@ -59,7 +59,8 @@ function BasketballPlayer(name, team) {
 BasketballPlayer.prototype = Object.create(Person.prototype);
 
 BasketballPlayer.prototype.sayHello = function() {
-	console.log("hello, i'm", this.name, "of", this.team);
+	Person.prototype.sayHello.call(this);				// Call Person.sayHello()
+	console.log("of", this.team);
 }
 
 BasketballPlayer.prototype.jump = function() {
@@ -81,35 +82,199 @@ player1.walk();
 player2.sayHello();
 player2.jump();
 player2.walk();
-
-console.log(player1 instanceof BasketballPlayer);							// true
-console.log(player1 instanceof Person);										// true
-
-// properties defined on the instance
-console.log("properties defined on the instance");
-console.log(player1.hasOwnProperty("name"));								// true
-console.log(player1.hasOwnProperty("team"));								// true
-console.log(player1.hasOwnProperty("sayHello"));							// false
-console.log(player1.hasOwnProperty("walk"));								// false
-console.log(player1.hasOwnProperty("jump"));								// false
-
-// properties defined on BasketballPlayer prototype
-console.log("properties defined on the prototype");
-console.log(player1.__proto__ === BasketballPlayer.prototype);				// true
-console.log(player1.__proto__.hasOwnProperty("sayHello"));					// true
-console.log(player1.__proto__.hasOwnProperty("jump"));						// true
-console.log(player1.__proto__.hasOwnProperty("walk"));						// false
-
-// properties defined on BasketballPlayer prototype
-console.log("properties defined on the prototype");
-console.log(player1.__proto__ instanceof Person);							// true
-console.log(player1.__proto__.__proto__ === Person.prototype);				// true
-console.log(player1.__proto__.__proto__.hasOwnProperty("sayHello"));		// true
-console.log(player1.__proto__.__proto__.hasOwnProperty("walk"));			// true
-console.log(player1.__proto__.__proto__.hasOwnProperty("jump"));			// false
-
-console.log(Person.prototype.__proto__ === Object.prototype);				// true
 ```
 
 #### Prototype Chain
 ![](https://raw.githubusercontent.com/achichen/qcloud-sharing-july-seventh/master/oop/prototype_chain.png)
+
+### The Problem
+It's never easy to form a proper prototype chain by yourself. Some library provides helper for this, for example, [`util.inherits()`](http://nodejs.org/api/util.html#util_util_inherits_constructor_superconstructor) in Node.js.
+
+---
+
+## CoffeeScript
+CoffeeScript provides ***class-based oop*** over ***protoype-based oop*** JavaScript.
+
+### Example 3
+To rewrite the class definition in Example 1 using CoffeeScript:
+```coffeescript
+class Person
+	constructor : (name) ->
+		@name = name
+
+	sayHello : () ->
+		console.log("hello, i'm", @name)
+
+person1 = new Person("manu ginobili")
+person2 = new Person("jeremy lin")
+
+console.log("person1", person1)
+console.log("person2", person2)
+
+person1.sayHello()								# hello, i'm manu ginobili
+person2.sayHello()								# hello, i'm jeremy lin
+```
+
+it is compiled to:
+
+```javascript
+(function() {
+    var Person, person1, person2;
+
+    Person = (function() {
+        function Person(name) {
+            this.name = name;
+        }
+
+        Person.prototype.sayHello = function() {
+            return console.log("hello, i'm", this.name);
+        };
+
+        return Person;
+
+    })();
+
+    person1 = new Person("manu ginobili");
+
+    person2 = new Person("jeremy lin");
+
+    console.log("person1", person1);
+
+    console.log("person2", person2);
+
+    person1.sayHello();
+
+    person2.sayHello();
+
+}).call(this);
+```
+
+### Example 4
+CoffeeScript provides `extends` for inheritance. Let's rewrite the Example 2 using CoffeeScript.
+
+```coffeescript
+# class Person
+class Person
+	constructor : (name) ->
+		@name = name
+
+	sayHello : () ->
+		console.log("hello, i'm", @name)
+
+	walk : () ->
+		console.log(@name, "is walking")
+
+
+# class BasketballPlayer
+class BasketballPlayer extends Person
+	constructor : (name, team) ->
+		super(name)
+		@team = team
+
+	sayHello : () ->
+		super()
+		console.log("of", @team)
+
+	jump : () ->
+		console.log(@name, "is jumping")
+
+
+# create 2 player instance
+player1 = new BasketballPlayer("manu ginobini", "san antonio spurs")
+player2 = new BasketballPlayer("jeremy lin", "houston rockets")
+
+console.log("player1", player1)
+console.log("player2", player2)
+
+player1.sayHello()
+player1.jump()
+player1.walk()
+
+player2.sayHello()
+player2.jump()
+player2.walk()
+```
+
+it is compiled to:
+
+```javascript
+(function() {
+    var BasketballPlayer, Person, player1, player2,
+        __hasProp = {}.hasOwnProperty,
+        __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor();
+            child.__super__ = parent.prototype;
+            return child;
+        };
+
+    Person = (function() {
+        function Person(name) {
+            this.name = name;
+        }
+
+        Person.prototype.sayHello = function() {
+            return console.log("hello, i'm", this.name);
+        };
+
+        Person.prototype.walk = function() {
+            return console.log(this.name, "is walking");
+        };
+
+        return Person;
+
+    })();
+
+    BasketballPlayer = (function(_super) {
+        __extends(BasketballPlayer, _super);
+
+        function BasketballPlayer(name, team) {
+            BasketballPlayer.__super__.constructor.call(this, name);
+            this.team = team;
+        }
+
+        BasketballPlayer.prototype.sayHello = function() {
+            BasketballPlayer.__super__.sayHello.call(this);
+            return console.log("of", this.team);
+        };
+
+        BasketballPlayer.prototype.jump = function() {
+            return console.log(this.name, "is jumping");
+        };
+
+        return BasketballPlayer;
+
+    })(Person);
+
+    player1 = new BasketballPlayer("manu ginobini", "san antonio spurs");
+
+    player2 = new BasketballPlayer("jeremy lin", "houston rockets");
+
+    console.log("player1", player1);
+
+    console.log("player2", player2);
+
+    player1.sayHello();
+
+    player1.jump();
+
+    player1.walk();
+
+    player2.sayHello();
+
+    player2.jump();
+
+    player2.walk();
+
+}).call(this);
+```
+
+#### Prototype Chain
+![](https://raw.githubusercontent.com/achichen/qcloud-sharing-july-seventh/master/oop/prototype_chain_by_coffee.png)

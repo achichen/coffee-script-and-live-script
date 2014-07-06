@@ -1,17 +1,17 @@
-// class Person
+// constructor Person
 function Person(name) {
 	this.name = name;
 }
 
 Person.prototype.sayHello = function() {
-	console.log("hello", this.name);
+	console.log("hello, i'm", this.name);
 }
 
 Person.prototype.walk = function() {
 	console.log(this.name, "is walking");
 }
 
-// class BasketballPlayer
+// constructor BasketballPlayer
 function BasketballPlayer(name, team) {
 	Person.call(this, name);
 
@@ -21,7 +21,8 @@ function BasketballPlayer(name, team) {
 BasketballPlayer.prototype = Object.create(Person.prototype);
 
 BasketballPlayer.prototype.sayHello = function() {
-	console.log("hello, i'm", this.name, "of", this.team);
+	Person.prototype.sayHello.call(this);				// Call Person.sayHello()
+	console.log("of", this.team);
 }
 
 BasketballPlayer.prototype.jump = function() {

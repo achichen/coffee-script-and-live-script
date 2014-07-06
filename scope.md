@@ -39,43 +39,100 @@ Javascript has only 2 level of scope:
 - **global**
 - **function**
 
-Unlike other lanaguage such as Java, JavaScript has no ***blocking scope***.
+```javascript
+var x = 1;                                  // global x
 
-Redeclare x in the for loop blocking using `var x` do nothing and no warning at all, it simply refer to the same `x` declared in first line of `f() {...}`.
+function f() {
+    var x = 5;                              // internal x
 
+    for (var i = 0; i < 10; i++) {
+        var x = i * 2;                      // internal x
+        console.log("in loop, x=", x);
+    }
 
-### CoffeeScript
-```coffeescript
-x = 1
+    console.log("in f() x=", x);            // internal x
+}
 
-f = () ->
-    x = 5;
+f();
 
-    for i in [0...10]
-        x = i * 2
-        console.log "in loop, x=", x
-
-    console.log "in f() x=", x
-
-f()
-
-console.log "in global, x=", x
+console.log("in global, x=", x);            // global x
 ```
 
-### LiveScript
-```livescript
-x = 1
+Unlike other lanaguage such as Java or C, JavaScript has no ***blocking scope***.
 
-f = ->
-    x = 5;
+Redeclaring x in the for loop blocking using `var x` simply refer to the same `x` declared in first line of `f() {...}`. It doesn't create a new variable and no warning at all. It is quite confusing if you're from language such as Java.
 
-    for i from 0 til 10
-        x = i * 2
+### CoffeeScript
+
+CoffeeScript **strickly forbids you from declaring variables**. Like other language such as Python, just use it when you need it, coffee automatically refers to the latest effective scope. Code above still does not solve the problem, but less confusing.
+
+```coffeescript
+x = 1                                   # global x
+
+f = () ->
+    x = 5;                              # inner x
+
+    for i in [0...10]
+        x = i * 2                       # inner x
         console.log "in loop, x=", x
 
-    console.log "in f() x=", x
+    console.log "in f() x=", x          # inner x
 
 f()
 
-console.log "in global, x=", x
+console.log "in global, x=", x          # global x
+```
+
+```coffeescript
+x = 1                                   # global x
+
+f = () ->
+    for i in [0...10]
+        x = i * 2                       # global x
+        console.log "in loop, x=", x
+
+    console.log "in f() x=", x          # global x
+
+f()
+
+console.log "in global, x=", x          # global x
+```
+
+But what if **we do want to modify the global x in f()**? Unfortunately, you can't do this in Coffee.
+
+### LiveScript
+LiveScript is similar to Coffee, but allow you to explicitly override variable in upper scope by using `:=`.
+
+```livescript
+x = 1                                   # global x
+f = ->
+    x := 5                              # global x
+
+    for i from 0 til 10
+        x := i * 2                      # global x
+        console.log "in loop, x=", x    # global x
+
+    console.log "in f() x=", x          # global x
+
+f()
+
+console.log "in global, x=", x          # global x
+```
+
+But this one doesn't work. LiveScript compiler complains *SyntaxError: accidental shadow of "x"*. Because the `x = i*2` always declares a `x` in the internal scope, which shadows the global one.
+
+```livescript
+x = 1                                   # global x
+f = ->
+    x := 5                              # global x
+
+    for i from 0 til 10
+        x = i * 2                       # try using a inertal x
+        console.log "in loop, x=", x    # try using a inertal x
+
+    console.log "in f() x=", x          # global x
+
+f()
+
+console.log "in global, x=", x          # global x
 ```

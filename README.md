@@ -1,1 +1,1 @@
-- [Scope](scope.md)
+- [Scope](scope)

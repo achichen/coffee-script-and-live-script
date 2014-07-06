@@ -1,6 +1,6 @@
 ## JavaScript
 
-JavaScript is an OO language, just not that straight-forward by using ***prototype-based programming***:
+JavaScript is an OO language, just not that straight-forward by using ***prototype-based oop***:
 - instead of defining `class`, JavaScript defines ***constructor***
 - inheritance is provided by ***protytype chaining***
 
@@ -278,3 +278,133 @@ it is compiled to:
 
 #### Prototype Chain
 ![](https://raw.githubusercontent.com/achichen/qcloud-sharing-july-seventh/master/oop/prototype_chain_by_coffee.png)
+
+### Example 5
+It is also possible to add **static** members onto class. But unlike Java, C++ and Python, they are not accessible via instances.
+
+```coffeescript
+class Person
+    # Static members
+    @type : "PERSON"                    # alternative: @type = "PERSON"
+
+    @getType : () ->                    # alternative: @getType = () ->
+        return @type
+
+    constructor : (name) ->
+        @name = name
+
+    sayHello : () ->
+        console.log("hello, i'm", @name)
+
+    getClassType : () ->
+        return Person.type
+
+person1 = new Person("manu ginobili")
+person2 = new Person("jeremy lin")
+
+console.log(Person.type)                # "PERSON"
+console.log(person1.type)               # undefined
+console.log(person2.type)               # undefined
+
+console.log(Person.getType())           # "PERSON"
+console.log(person1.getType())          # TypeError: Object #<Person> has no method 'getType'
+console.log(person2.getType())          # TypeError: Object #<Person> has no method 'getType'
+
+console.log(person1.getClassType())     # "PERSON"
+console.log(person2.getClassType())     # "PERSON"
+```
+
+it is compiled to:
+
+```javascript
+(function() {
+    var Person, person1, person2;
+
+    Person = (function() {
+        Person.type = "PERSON";
+
+        Person.getType = function() {
+            return this.type;
+        };
+
+        function Person(name) {
+            this.name = name;
+        }
+
+        Person.prototype.sayHello = function() {
+            return console.log("hello, i'm", this.name);
+        };
+
+        Person.prototype.getClassType = function() {
+            return Person.type;
+        };
+
+        return Person;
+
+    })();
+}).call(this);
+```
+
+### Example 6
+static members are inherited by subclass. But unlike Java, C++, the inherited static members are **copied** into subclass, change on it doesn't affect the superclass's static member. The same behavior can also be found in Python.
+
+```coffeescript
+# class Person
+class Person
+    # Static members
+    @personCount : 0
+    @type : "PERSON"                        # alternative: @type = "PERSON"
+
+    @getType : () ->                        # alternative: @getType = () ->
+        return @type
+
+    constructor : (name) ->
+        @name = name
+        Person.pesonCount++
+
+    sayHello : () ->
+        console.log("hello, i'm", @name)
+
+    walk : () ->
+        console.log(@name, "is walking")
+
+
+# class BasketballPlayer
+class BasketballPlayer extends Person
+
+    constructor : (name, team) ->
+        super(name)
+        @team = team
+        BasketballPlayer.personCount++
+
+    sayHello : () ->
+        super()
+        console.log("of", @team)
+
+    jump : () ->
+        console.log(@name, "is jumping")
+
+# create 2 player instance
+player1 = new BasketballPlayer("manu ginobini", "san antonio spurs")
+
+
+console.log Person.type                     # "PERSON"
+console.log Person.getType()                # "PERSON"
+console.log BasketballPlayer.type           # "PERSON"
+console.log BasketballPlayer.getType()      # "PERSON"
+
+console.log player1.type                    # undefined
+#console.log player1.getType()              # TypeError: Object #<BasketballPlayer> has no method 'getType'
+
+BasketballPlayer.type = "BasketballPlayer"
+console.log Person.type                     # "PERSON"
+console.log BasketballPlayer.type           # "BasketballPlayer"
+
+BasketballPlayer.getType = () ->
+    return @type + "!!!!!"
+console.log Person.getType()                # "PERSON"
+console.log BasketballPlayer.getType()      # "BasketballPlayer!!!"
+
+console.log Person.personCount              # 0
+console.log BasketballPlayer.personCount    # 1
+```

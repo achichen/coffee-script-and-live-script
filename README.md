@@ -1,6 +1,3 @@
-- [Scope](scope)
-- [OOP](oop)
-
 # JavaScript
 
 - JavaScript @ 1995. 
